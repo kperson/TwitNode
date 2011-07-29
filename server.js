@@ -15,9 +15,10 @@ var handler = {
 validationDAO.validateLogin('searchTweets', login.username, login.password, function(client){
 			tweetDAO.search(term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, 
 				function(resultRs){
+                                     client.end();
 		console.log(server.connections);
-
 					success(resultRs);
+
 				},function(err){ handler.defaultRandomError(err);});
 		}, 
 		function(){ handler.defaultLoginFailure();}, function(err){handler.defaultRandomError(err);} );
