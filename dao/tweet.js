@@ -155,6 +155,7 @@ exports.search = function(term, memberId, companyName, ticker, since, slug, indu
 	        
 	        var onComplete = function(){
 	        	if(set.data != null && set.ct != null){
+                                client.end();
 	        		var rs = [];
 	        		for(var i = 0; i < set.data.length; i++){
 	        			var my_dict = set.data[i];
@@ -193,6 +194,8 @@ exports.search = function(term, memberId, companyName, ticker, since, slug, indu
 	        
 	        client.query(select, params, function(error, results, fields){
 	        	if(error){
+                                client.end();
+
 	        		onError(error.message);
 	        	}
 	        	else{
@@ -203,6 +206,8 @@ exports.search = function(term, memberId, companyName, ticker, since, slug, indu
 	        
 	        client.query(select_ct, params2, function(error, results, fields){
 	        	if(error){
+                                client.end();
+
 	        		onError(error.message);
 	        	}
 	        	else{
