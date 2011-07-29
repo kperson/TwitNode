@@ -12,7 +12,8 @@ var validationDAO = require('./dao/validation.js');
 var handler = {
 	
 	searchTweets: function (term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, login, success){
-		validationDAO.validateLogin('searchTweets', login.username, login.password, function(client){
+		console.log(server.connections);
+validationDAO.validateLogin('searchTweets', login.username, login.password, function(client){
 			tweetDAO.search(term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, 
 				function(resultRs){
 					success(resultRs);
