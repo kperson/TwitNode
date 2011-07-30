@@ -12,12 +12,10 @@ var validationDAO = require('./dao/validation.js');
 var handler = {
 	
 	searchTweets: function (term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, login, success){
-validationDAO.validateLogin('searchTweets', login.username, login.password, function(client){
-			tweetDAO.search(term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, 
+		validationDAO.validateLogin('searchTweets', login.username, login.password, function(mgClient){
+			tweetDAO.search(mgClient, term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, 
 				function(resultRs){
-		console.log(server.connections);
 					success(resultRs);
-
 				},function(err){ handler.defaultRandomError(err);});
 		}, 
 		function(){ handler.defaultLoginFailure();}, function(err){handler.defaultRandomError(err);} );
