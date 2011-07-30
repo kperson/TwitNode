@@ -1,6 +1,9 @@
 var config = require('./config.js');
 
-var thrift = require('thrift');
+var thrift = require('./thrift/index.js'),
+ttransport = require('./thrift/transport.js');
+
+//var thrift = require('thrift');
 
 var API = require('./gen-nodejs/API.js');
 var ttypes = require('./gen-nodejs/twitservice_types.js');
@@ -32,5 +35,5 @@ var handler = {
 
 //handler.searchTweets2({username : 'kelton', password : 'person'});
 
-var server = thrift.createServer(API, handler);
+var server = thrift.createServer(API, handler, {transport: ttransport.TBufferedTransport});
 server.listen(9090);
