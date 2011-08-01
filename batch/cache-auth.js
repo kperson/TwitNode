@@ -45,7 +45,7 @@ baseConn.createNewConnection(function(client){
 				db.open(function(err, db) {
 					if(!err){
 						db.collection('api_cache', function(err, collection){
-							collection.ensureIndex(['login', ['api_key', 1], ['api_secret', 1], ['active', 1]], function(err, indexName){
+							collection.ensureIndex(['login', ['api_key', 1], ['api_secret', 1]], function(err, indexName){
 								collection.insert(set, function(err, docs){
 									var deleteCt = 0;
 									for(var i = 0; i < set.length; i++){
