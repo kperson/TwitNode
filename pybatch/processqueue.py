@@ -14,5 +14,5 @@ set = cursor.fetchall()
 if len(set) == 1:
     searchticker.search_ticker(set[0][0])
     cursor.execute(update, set[0][0])
-mysql.commit()    
+    mysql.commit()    
 mysql.close()
