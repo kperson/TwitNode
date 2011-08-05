@@ -47,7 +47,7 @@ def search_ticker(ticker):
             strip_url = content
             for url in urls:
                 strip_url = strip_url.replace(url, '').strip()
-            hash_val = hashlib.sha1(strip_url).hexdigest()
+            hash_val = hashlib.sha1(unicode(strip_url, errors='ignore')).hexdigest()
             insert_data.append((id, content, handle, unicode(ticker), profile_img, hash_val))
         for item in insert_data:
             cursor.execute(insert, item)
