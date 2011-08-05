@@ -15,6 +15,8 @@ var validationDAO = require('./dao/validation.js');
 var handler = {
 	
 	searchTweets: function (term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, login, success){
+		var args = Array.prototype.slice.call(arguments, 0);
+		console.log(args);
 		validationDAO.validateLogin('searchTweets', login.username, login.password, function(mgClient){
 			tweetDAO.search(mgClient, term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, 
 				function(resultRs){
@@ -32,8 +34,6 @@ var handler = {
 	}	
 	
 };
-
-//handler.searchTweets2({username : 'kelton', password : 'person'});
 
 var server = thrift.createServer(API, handler, {transport: ttransport.TBufferedTransport});
 server.listen(9090);

@@ -14,10 +14,8 @@ db.open(function(err, db) {
 	db.collection('search_cache', function(err, collection){
 		collection.find({}, function(err, cursor) {
 			cursor.each(function(err, doc) {
-				console.log(doc.start);
-				console.log(doc.limit);
+				console.log(doc);
 				if(doc.term != undefined){
-					console.log(doc.term);
 				}
 				console.log('');
 			});
