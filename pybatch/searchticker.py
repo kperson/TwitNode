@@ -50,7 +50,6 @@ def search_ticker(ticker):
             hash_val = hashlib.sha1(strip_url.encode('utf-8', 'ignore')).hexdigest()
             insert_data.append((id, content.encode('utf-8', 'ignore'), handle, ticker, profile_img, hash_val))
         for item in insert_data:
-            print item
             cursor.execute(insert, item)
         mysql.commit() 
     mysql.close()
