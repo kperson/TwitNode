@@ -138,8 +138,8 @@ p.toDWord    = function( data ){ return this.decodeInt( data, 32, false ); };
 p.fromDWord  = function( data ){ return this.encodeInt( data, 32, false ); };
 p.toQWord    = function( data ){ return this.decodeInt( data, 64, true ); };
 p.fromQWord  = function( data ){ return this.encodeInt( data, 64, true ); };
-p.toFloat    = function( data ){ return this.decodeFloat( data, 23, 8   ); };
-p.fromFloat  = function( data ){ return this.encodeFloat( data, 23, 8   ); };
+p.toFloat    = function( data ){ return this.decodeFloat( data, 52, 11   ); };
+p.fromFloat  = function( data ){ return this.encodeFloat( data, 52, 11   ); };
 p.toDouble   = function( data ){ return this.decodeFloat( data, 52, 11  ); };
 p.fromDouble = function( data ){ return this.encodeFloat( data, 52, 11  ); };
 
