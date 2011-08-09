@@ -2,7 +2,97 @@ var baseConn = require('./base.js');
 var ttypes = require('./../gen-nodejs/twitservice_types.js');
 var config = require('./../config.js');
 
+exports.search2 = function(mgClient, term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, onSuccess, onError){
+	console.log(mgClient);
+	var cache_qry = {};
+	cache_qry.member_id = memberId == null ? {$exists : false} : memberId;
+	cache_qry.term = term == null ? {$exists : false} : term.toLowerCase();
+	cache_qry.company_name = companyName == null ? { $exists : false } : companyName;
+	cache_qry.ticker = ticker == null ? { $exists : false } : ticker;
+	cache_qry.slug = slug == null ? { $exists : false } : slug;
+	cache_qry.industry = industry == null ? { $exists : false } : industry;
+	cache_qry.ticker = handle == null ? { $exists : false } : handle;
+	cache_qry.industry_slug = industrySlug == null ? { $exists : false } : industrySlug;
+	cache_qry.sector = sector == null ? { $exists : false } : sector;
+	cache_qry.sector_slug = sectorSlug == null ? { $exists : false } : sectorSlug;
+	cache_qry.order = order == null ? { $exists : false } : order;
+	cache_qry.order_direction = orderDirection == null ? { $exists : false } : orderDirection;
+	cache_qry.start = start == null ? { $exists : false } : start;
+	cache_qry.limit = limit == null ? { $exists : false } : limit;
+	cache_qry.score = score == null ? { $exists : false } : score;
+	var ts = Math.round((new Date()).getTime() / 1000);
+	cache_qry.created_at = {$gt : since - config.cache_time * 60, $lt : since + config.cache_time * 60};
+	cache_qry.added_at = {$gt : ts - config.cache_time * 60};
+	
+	mgClient.collection('search_cache', function(err, collection){
+		collection.findOne(cache_qry, function(error, result){
+			if(error){
+				mgClient.close();
+			}
+			if(result == undefined){
+				mongoSearch();
+			}
+			else{
+			}
+		});
+	});
+	
+	var mongoSearch = function(){
+		var qry = {};
+		qry.member_id = memberId;
+		qry.term = term.toLowerCase();
+		qry.company_name = companyName;
+		qry.ticker = ticker;
+		qry.slug = slug;
+		qry.industry = industry;
+		qry.ticker = handle;
+		qry.industry_slug = industrySlug;
+		qry.sector = sector;
+		qry.sector_slug = sectorSlug;
+		qry.order = order;
+		qry.order_direction = orderDirection;
+		qry.start = start;
+		qry.limit = limit;
+		qry.score = { $gte : score };
+		qry.created_at = {$gt : since - config.cache_time * 60, $lt : since + config.cache_time * 60};	
+		
+		var search_list = [];
+		if(term != null && term != ''){
+			search_list = term.toLowerCase().split(' ');
+			
+			for(var i = 0; i < search_list.length; i++){
+				if(search_list[i] == '' || search_list[i] == ' '){
+					search_list.splice(i, 1);
+				}
+			}
+		}
+		if(search_list.length > 0){
+			var or_list = [];
+			for (var i = 0; i < search_list.length; i++){
+				or_list.append({ keywords : search_list[i] });
+			}
+			qry.$or = or_list;
+		}
+		
+		for(var key in qry){
+			if(qry[key] == null){
+				delete qry[key];
+			}
+		}
+		
+		mgClient.collection('search_list', function(error, collection){
+			collection.find(qry, function(error, cursor){
+				cursor.each(function(err, doc){
+					console.log(doc);
+				});
+			});
+		});
+		
+	};
+	
+};
 exports.search = function(mgClient, term, memberId, companyName, ticker, since, slug, industry, handle, industrySlug, sector, sectorSlug, showSlugs, order, orderDirection, start, limit, score, onSuccess, onError){
+
 	if(memberId == null){
 		cache_qry = {};
 		cache_qry.term = term == null ? {$exists : false} : term.toLowerCase();
@@ -73,10 +163,10 @@ exports.search = function(mgClient, term, memberId, companyName, ticker, since, 
 				params = [];
 				
 				if (showSlugs == false){
-					select_clause = 'SELECT t.content, t.tweet_id, t.handle, c.ticker, t.profile_img, c.sector, c.industry, c.name AS company_name, UNIX_TIMESTAMP(t.created_at) AS time';			
+					select_clause = 'SELECT t.score, t.content, t.tweet_id, t.handle, c.ticker, t.profile_img, c.sector, c.industry, c.name AS company_name, UNIX_TIMESTAMP(t.created_at) AS time';			
 				}
 				else{
-		            select_clause = 'SELECT t.content, t.tweet_id, t.handle, c.ticker, t.profile_img, c.sector, c.industry, c.name AS company_name, UNIX_TIMESTAMP(t.created_at) AS time, c.slug, se.slug AS sector_slug, i.slug AS industry_slug';
+		            select_clause = 'SELECT t.score, t.content, t.tweet_id, t.handle, c.ticker, t.profile_img, c.sector, c.industry, c.name AS company_name, UNIX_TIMESTAMP(t.created_at) AS time, c.slug, se.slug AS sector_slug, i.slug AS industry_slug';
 				}
 				
 				var search_list = [];
@@ -93,7 +183,7 @@ exports.search = function(mgClient, term, memberId, companyName, ticker, since, 
 				var where_clause = [];
 				var tweet_where = [];
 				
-				if(score == null){
+				if(score != null){
 					tweet_where.push({key : 'score', value : score, op : '>='});
 					params.push(score);
 				}
@@ -239,6 +329,7 @@ exports.search = function(mgClient, term, memberId, companyName, ticker, since, 
 		                        t.sectorSlug = my_dict['sector_slug'];
 		                        t.industrySlug = my_dict['industry_slug'];
 		                    }
+		                    console.log(my_dict);
 		                    rs.push(t);
 		        		}
 		        		

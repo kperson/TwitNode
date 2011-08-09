@@ -12,7 +12,7 @@ config.dhost = '74.207.249.119';
 config.dport = '27017';
 config.ddatabase = 'twitco-db';
 
-config.cache_time = 5;
+config.cache_time = 3;
 
 
 config.rhost = 'localhost';

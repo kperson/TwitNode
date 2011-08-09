@@ -25,7 +25,7 @@ def search_ticker(ticker):
     if len(set) == 1:
         search_name = name = set[0][0]
         
-        params = { 'result_type' : 'mixed', 'q' : search_name }
+        params = { 'result_type' : 'popular', 'q' : search_name }
         search_url = 'http://search.twitter.com/search.atom'
         
         req = urllib2.Request(search_url,  urllib.urlencode(params))

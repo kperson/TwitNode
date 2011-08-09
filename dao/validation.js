@@ -9,6 +9,8 @@ var config = require('./../config.js');
 exports.validateLogin = function(functionName, username, password, onSuccess, onFailure, onError){
 	var db = new Db(config.ddatabase, new Server(config.dhost, config.dport, {}), {native_parser:true});
 	db.open(function(err, db) {
+		if(err){
+		}
 		db.collection('api_cache', function(err, collection){
 			collection.count({ api_key : username, api_secret : password, permissions : functionName  }, function(err, results){
 				if(results == 1){
