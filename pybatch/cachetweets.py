@@ -1,9 +1,12 @@
 import config
 from pymongo import Connection
 import MySQLdb
+import hashlib
 
 dconn = Connection(config.dhost, config.dport)
 mongo = dconn[config.ddatabase]
+
+mongo.search_list.drop_indexes()
 
 mysql = MySQLdb.connect(host = config.rhost, user = config.ruser, passwd = config.rpassword, db = config.rdatabase, port = config.rport)
 
@@ -26,6 +29,7 @@ if len(set) != 0:
             my_dict = dict(zip(columns, row))
             my_dict['created_at'] = int(my_dict['created_at'])
             my_dict['score'] = float(my_dict['score'])
+            my_dict['u_key'] =  hashlib.sha1('%s%s' % (my_dict['tweet_id'], my_dict['hash_val'])).hexdigest()
             cursor.execute(keyword_sql, (my_dict['tweet_id']))
             for theword in cursor.fetchall():
                 word_list.append(theword[0])
@@ -36,9 +40,7 @@ if len(set) != 0:
             bound_update.append((-1, my_dict['tweet_id'], my_dict['ticker']))
             print 'Error with content: ' + my_dict['content']
     
-    mongo.search_list.drop_indexes()
     mongo.search_list.insert(items)
-    #mongo.search_list.ensure_index('hash_val', unique = True)
     
     update_sql = 'UPDATE tweet SET denorm = %s WHERE tweet_id = %s AND ticker = %s'
     cursor.executemany(update_sql, bound_update)
