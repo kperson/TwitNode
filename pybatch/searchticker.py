@@ -14,7 +14,7 @@ def getText(nodelist):
             rc.append(node.data)
     return ''.join(rc)
 
-def search_ticker(ticker):
+def search_ticker(ticker, mode):
     mysql = MySQLdb.connect(host = config.rhost, user = config.ruser, passwd = config.rpassword, db = config.rdatabase, port = config.rport)
     cursor = mysql.cursor()
     cursor.execute('SET NAMES utf8')
@@ -25,7 +25,7 @@ def search_ticker(ticker):
     if len(set) == 1:
         search_name = name = set[0][0]
         
-        params = { 'result_type' : 'mixed', 'q' : search_name }
+        params = { 'result_type' : mode, 'q' : search_name }
         search_url = 'http://search.twitter.com/search.atom'
         
         req = urllib2.Request(search_url,  urllib.urlencode(params))
